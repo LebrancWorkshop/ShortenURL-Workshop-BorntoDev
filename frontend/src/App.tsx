@@ -1,35 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
+import axios from 'axios';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App: React.FC = () => {
+  const [url, setURL] = useState<string>();
+  const [shortURL, setShortURL] = useState<string>();
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+  const handleSubmit = async(event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    try {
+      const response = await axios.post('/api/v1/url', { url });
+      const { short_url } = response.data;
+      setShortURL(short_url); 
+    } catch (error) {
+      console.error(error);
+    }
+
+  }
+
+  return(
+    <div>
+      <header>
+        <div>
+          <h1>Shorten URL</h1>
+        </div>
+      </header>
+      <section id="form-section">
+        <div>
+          <form action="POST">
+            <input type="text" name="url" id="url" placeholder="Enter URL here" />
+            <input type="submit" value="submit" />
+          </form>
+        </div>
+      </section>
+    </div>
   )
 }
 
-export default App
+export default App;
